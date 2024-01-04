@@ -35,11 +35,12 @@ SHOW_PAYOUTS = get_config('REPORT', 'show_payouts', bool)
 SHOW_WEEKLY = get_config('REPORT', 'show_weekly', bool)
 WEEKLY_THRESHOLD = get_config('REPORT', 'weekly_threshold', int)
 
+OUTPUT_FILE = open('report.txt', 'w')
 
 for i, YEAR in enumerate(YEARS):
     num_weeks = int(NUM_WEEKS[i])
     year = int(YEAR)
-    generate_report(
+    report = generate_report(
         league_id=LEAGUE_ID,
         espn_s2=ESPN_S2,
         swid=SWID,
@@ -49,3 +50,5 @@ for i, YEAR in enumerate(YEARS):
         show_weekly=SHOW_WEEKLY,
         weekly_threshold=WEEKLY_THRESHOLD,
     )
+
+    OUTPUT_FILE.write(report)
