@@ -1,4 +1,3 @@
-[default]
 num_weeks = 17
 espn_s2 = "XXX"
 swid = "XXX"
