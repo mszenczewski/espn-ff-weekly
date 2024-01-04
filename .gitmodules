@@ -1,0 +1,3 @@
+[submodule "espn_api"]
+	path = espn_api
+	url = git@github.com:mszenczewski/espn-api.git

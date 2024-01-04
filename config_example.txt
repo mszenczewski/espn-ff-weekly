@@ -1,0 +1,6 @@
+[default]
+num_weeks = 17
+espn_s2 = "XXX"
+swid = "XXX"
+year = 2023
+league_id = 12345
