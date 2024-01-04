@@ -1,5 +1,11 @@
-num_weeks = 17
+[LEAGUE]
 espn_s2 = "XXX"
 swid = "XXX"
-year = 2023
 league_id = 12345
+num_weeks = [16, 16, 17, 17, 17]
+years = [2019, 2020, 2021, 2022, 2023]
+
+[REPORT]
+show_payouts = True
+show_weekly = True
+weekly_threshold = 0

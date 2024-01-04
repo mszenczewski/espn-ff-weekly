@@ -1,65 +1,51 @@
 from typing import Optional
-from espn_api.espn_api.football import League
 import configparser
 
-CFG_HEADER = 'default'
-with open(r'config.txt') as cfg:
-    config = configparser.RawConfigParser()
-    config.read_string(f"[{CFG_HEADER}]\n" + cfg.read())
+from generate_report import generate_report
+
+CONFIG = configparser.RawConfigParser()
+CONFIG.read(r'config.txt')
 
 
-def get_config(key: str, return_type: Optional[type] = str):
-    value = config.get(CFG_HEADER, key)
+def get_config(header: str, key: str, return_type: Optional[type] = str):
+    value = CONFIG.get(header, key)
+    if return_type is str:
+        return str(value)
     if return_type is int:
         return int(value)
-    return str(value)
+    if return_type is bool:
+        if str.lower(value) == 'false':
+            return False
+        return True
+    if return_type is list:
+        value = value.replace('[', '')
+        value = value.replace(']', '')
+        value = value.replace(',', '')
+        return str.split(value)
+    raise ValueError('invalid config type')
 
 
-NUM_WEEKS = get_config('num_weeks', int)
-ESPN_S2 = get_config('espn_s2')
-SWID = get_config('swid')
-YEAR = get_config('year', int)
-LEAGUE_ID = get_config('league_id', int)
+ESPN_S2 = get_config('LEAGUE', 'espn_s2')
+SWID = get_config('LEAGUE', 'swid')
+LEAGUE_ID = get_config('LEAGUE', 'league_id', int)
+YEARS = get_config('LEAGUE', 'years', list)
+NUM_WEEKS = get_config('LEAGUE', 'num_weeks', list)
 
-league = League(
-    league_id=LEAGUE_ID,
-    year=YEAR,
-    espn_s2=ESPN_S2,
-    swid=SWID
-)
+SHOW_PAYOUTS = get_config('REPORT', 'show_payouts', bool)
+SHOW_WEEKLY = get_config('REPORT', 'show_weekly', bool)
+WEEKLY_THRESHOLD = get_config('REPORT', 'weekly_threshold', int)
 
-teams = league.teams
-payouts = {}
-top_scorers = []
 
-for team in teams:
-    name = f"{team.owners[0]['firstName']} {team.owners[0]['lastName']}"
-    payouts[name] = 0
-
-for i in range(NUM_WEEKS):
-    high_score = 0
-    winner = None
-    name = None
-
-    for team in teams:
-        if team.scores[i] > high_score:
-            high_score = team.scores[i]
-            name = f"{team.owners[0]['firstName']} {team.owners[0]['lastName']}"
-
-    top_scorers.append({
-        'score': high_score,
-        'name': name
-    })
-
-    payouts[name] = payouts[name] + 1
-
-for i, top_scorer in enumerate(top_scorers):
-    week = i + 1
-    name = top_scorer['name']
-    score = top_scorer['score']
-    print(f"Week {week:2}: {name:20} {score}")
-
-print()
-
-for name in payouts:
-    print(f"{name:18} {payouts[name]}")
+for i, YEAR in enumerate(YEARS):
+    num_weeks = int(NUM_WEEKS[i])
+    year = int(YEAR)
+    generate_report(
+        league_id=LEAGUE_ID,
+        espn_s2=ESPN_S2,
+        swid=SWID,
+        num_weeks=num_weeks,
+        year=year,
+        show_payouts=SHOW_PAYOUTS,
+        show_weekly=SHOW_WEEKLY,
+        weekly_threshold=WEEKLY_THRESHOLD,
+    )
