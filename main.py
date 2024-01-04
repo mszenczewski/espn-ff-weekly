@@ -1,14 +1,23 @@
+from typing import Optional
+
 from espn_api.espn_api.football import League
 import configparser
 
 config = configparser.RawConfigParser()
 config.read(r'config.txt')
 
-NUM_WEEKS = int(config.get('default', 'num_weeks'))
-ESPN_S2 = config.get('default', 'espn_s2')
-SWID = config.get('default', 'swid')
-YEAR = int(config.get('default', 'year'))
-LEAGUE_ID = int(config.get('default', 'league_id'))
+
+def get_config(profile: str, param: str, return_type: Optional[type] = str):
+    if return_type is int:
+        return int(config.get(profile, param))
+    return str(config.get(profile, param))
+
+
+NUM_WEEKS = get_config('default', 'num_weeks', int)
+ESPN_S2 = get_config('default', 'espn_s2')
+SWID = get_config('default', 'swid')
+YEAR = get_config('default', 'year', int)
+LEAGUE_ID = get_config('default', 'league_id', int)
 
 league = League(
     league_id=LEAGUE_ID,
