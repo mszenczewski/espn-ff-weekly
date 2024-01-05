@@ -1,11 +1,8 @@
 from typing import Optional
-from espn_api.espn_api.football import League
 
 
 def generate_report(
-        league_id,
-        espn_s2,
-        swid,
+        league,
         num_weeks,
         year,
         show_payouts: Optional[bool] = True,
@@ -13,13 +10,6 @@ def generate_report(
         weekly_threshold: Optional[int] = 0
 ) -> str:
     report = ''
-
-    league = League(
-        league_id=league_id,
-        year=year,
-        espn_s2=espn_s2,
-        swid=swid
-    )
 
     teams = league.teams
     payouts = {}
