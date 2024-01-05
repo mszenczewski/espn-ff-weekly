@@ -16,10 +16,10 @@ SHOW_PAYOUTS = get_config('REPORT', 'show_payouts', bool)
 SHOW_WEEKLY = get_config('REPORT', 'show_weekly', bool)
 WEEKLY_THRESHOLD = get_config('REPORT', 'weekly_threshold', int)
 
-OUTPUT_FILENAME = get_config('REPORT', 'output_filename')
-OUTPUT_FILE = open(OUTPUT_FILENAME, 'w')
-
 DEBUG = get_config('SETTINGS', 'debug', bool)
+OUTPUT_FILENAME = get_config('SETTINGS', 'output_filename')
+
+OUTPUT_FILE = open(OUTPUT_FILENAME, 'w')
 
 
 def main():
