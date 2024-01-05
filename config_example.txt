@@ -9,3 +9,4 @@ years = [2019, 2020, 2021, 2022, 2023]
 show_weekly = true
 weekly_threshold = 0
 show_payouts = true
+output_filename = report.txt
