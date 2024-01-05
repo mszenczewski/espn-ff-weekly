@@ -19,13 +19,18 @@ WEEKLY_THRESHOLD = get_config('REPORT', 'weekly_threshold', int)
 OUTPUT_FILENAME = get_config('REPORT', 'output_filename')
 OUTPUT_FILE = open(OUTPUT_FILENAME, 'w')
 
+DEBUG = get_config('SETTINGS', 'debug', bool)
+
 
 def main():
     for i, year in enumerate(YEARS):
+        print(f"league {LEAGUE_ID}, year {year}") if DEBUG else None
+
         num_weeks = NUM_WEEKS[i]
         cached_league_filename = f".league_cache/{LEAGUE_ID}_{year}"
 
         if exists(cached_league_filename):
+            print(f"  using cached file {LEAGUE_ID}_{year}...") if DEBUG else None
             with open(cached_league_filename, 'rb') as cached_league_file:
                 league = pickle.load(cached_league_file)
         else:
@@ -37,11 +42,14 @@ def main():
             )
 
             if not exists('.league_cache'):
+                print(f"  creating league_cache directory...") if DEBUG else None
                 os.mkdir('.league_cache')
 
             with open(cached_league_filename, 'wb+') as cached_league_file:
+                print(f"  caching league {LEAGUE_ID}_{year}...") if DEBUG else None
                 pickle.dump(league, cached_league_file)
 
+        print(f"  generating report for {year}...") if DEBUG else None
         report = generate_report(
             league=league,
             num_weeks=num_weeks,
@@ -51,6 +59,7 @@ def main():
             weekly_threshold=WEEKLY_THRESHOLD,
         )
 
+        print(f"  writing report to {OUTPUT_FILENAME}...") if DEBUG else None
         OUTPUT_FILE.write(report)
 
     OUTPUT_FILE.close()
