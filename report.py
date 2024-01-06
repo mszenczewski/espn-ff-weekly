@@ -35,7 +35,10 @@ def __weekly_payouts(teams, num_weeks) -> dict:
         name = top_scorer['name']
         payouts[name] += 1
 
-    return payouts
+    sorted_payouts = sorted(payouts.items(), key=lambda item: item[1])
+    sorted_payouts.reverse()
+
+    return dict(sorted_payouts)
 
 
 def generate_report(
