@@ -1,6 +1,6 @@
 import os
 
-from generate_report import generate_report
+from report import generate_report
 from config import get_config
 from espn_api.espn_api.football import League
 import pickle
