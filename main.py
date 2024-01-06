@@ -1,9 +1,8 @@
+import pickle
 import os
-
 from report import generate_report
 from config import get_config
 from espn_api.espn_api.football import League
-import pickle
 from os.path import exists
 
 ESPN_S2 = get_config('LEAGUE', 'espn_s2')
