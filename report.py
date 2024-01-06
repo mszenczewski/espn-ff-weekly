@@ -1,28 +1,6 @@
 from typing import Optional
 
 
-def __weekly_payouts(teams, num_weeks) -> dict:
-    payouts = {}
-
-    for team in teams:
-        name = f"{team.owners[0]['firstName']} {team.owners[0]['lastName']}"
-        payouts[name] = 0
-
-    for i in range(num_weeks):
-        high_score = 0
-        name = None
-
-        for team in teams:
-            score = team.scores[i]
-            if score > high_score:
-                high_score = score
-                name = f"{team.owners[0]['firstName']} {team.owners[0]['lastName']}"
-
-        payouts[name] = payouts[name] + 1
-
-    return payouts
-
-
 def __top_scorers(teams, num_weeks) -> list:
     top_scorers = []
 
@@ -42,6 +20,22 @@ def __top_scorers(teams, num_weeks) -> list:
         })
 
     return top_scorers
+
+
+def __weekly_payouts(teams, num_weeks) -> dict:
+    payouts = {}
+
+    for team in teams:
+        name = f"{team.owners[0]['firstName']} {team.owners[0]['lastName']}"
+        payouts[name] = 0
+
+    top_scorers = __top_scorers(teams, num_weeks)
+
+    for top_scorer in top_scorers:
+        name = top_scorer['name']
+        payouts[name] += 1
+
+    return payouts
 
 
 def generate_report(
