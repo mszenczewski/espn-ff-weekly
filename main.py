@@ -9,7 +9,6 @@ ESPN_S2 = get_config('LEAGUE', 'espn_s2')
 SWID = get_config('LEAGUE', 'swid')
 LEAGUE_ID = get_config('LEAGUE', 'league_id', int)
 YEARS = get_config('LEAGUE', 'years', list)
-NUM_WEEKS = get_config('LEAGUE', 'num_weeks', list)
 
 SHOW_PAYOUTS = get_config('REPORT', 'show_payouts', bool)
 SHOW_WEEKLY = get_config('REPORT', 'show_weekly', bool)
@@ -22,10 +21,9 @@ OUTPUT_FILE = open(OUTPUT_FILENAME, 'w')
 
 
 def main():
-    for i, year in enumerate(YEARS):
+    for year in YEARS:
         print(f"league {LEAGUE_ID}, year {year}") if DEBUG else None
 
-        num_weeks = NUM_WEEKS[i]
         cached_league_filename = f".league_cache/{LEAGUE_ID}_{year}"
 
         if exists(cached_league_filename):
@@ -51,7 +49,6 @@ def main():
         print(f"  generating report for {year}...") if DEBUG else None
         report = generate_report(
             league=league,
-            num_weeks=num_weeks,
             year=year,
             show_payouts=SHOW_PAYOUTS,
             show_weekly=SHOW_WEEKLY,

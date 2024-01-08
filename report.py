@@ -43,7 +43,6 @@ def __weekly_payouts(teams, num_weeks) -> dict:
 
 def generate_report(
         league,
-        num_weeks,
         year,
         show_payouts: Optional[bool] = True,
         show_weekly: Optional[bool] = True,
@@ -51,6 +50,7 @@ def generate_report(
 ) -> str:
     report = ''
     teams = league.teams
+    num_weeks = len(league.settings.matchup_periods)
     payouts = __weekly_payouts(teams, num_weeks)
     top_scorers = __top_scorers(teams, num_weeks)
 
