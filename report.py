@@ -1,4 +1,5 @@
 from typing import Optional
+from espn_api.espn_api.football import League
 
 
 def __top_scorers(teams, num_weeks) -> list:
@@ -42,31 +43,33 @@ def __weekly_payouts(teams, num_weeks) -> dict:
 
 
 def generate_report(
-        league,
-        year,
+        leagues: list[League],
         show_payouts: Optional[bool] = True,
         show_weekly: Optional[bool] = True,
         weekly_threshold: Optional[int] = 0
 ) -> str:
     report = ''
-    teams = league.teams
-    num_weeks = len(league.settings.matchup_periods)
-    payouts = __weekly_payouts(teams, num_weeks)
-    top_scorers = __top_scorers(teams, num_weeks)
 
-    report += f"{year}\n----\n"
-    if show_weekly:
-        for i, top_scorer in enumerate(top_scorers):
-            week = i + 1
-            name = top_scorer['name']
-            score = top_scorer['score']
-            if score >= weekly_threshold:
-                report += f"Week {week:2}: {name:20} {score}\n"
-        report += '\n'
+    for league in leagues:
+        teams = league.teams
+        year = league.year
+        num_weeks = len(league.settings.matchup_periods)
+        payouts = __weekly_payouts(teams, num_weeks)
+        top_scorers = __top_scorers(teams, num_weeks)
 
-    if show_payouts:
-        for name in payouts:
-            report += f"{name:18} {payouts[name]}\n"
-        report += '\n'
+        report += f"{year}\n----\n"
+        if show_weekly:
+            for i, top_scorer in enumerate(top_scorers):
+                week = i + 1
+                name = top_scorer['name']
+                score = top_scorer['score']
+                if score >= weekly_threshold:
+                    report += f"Week {week:2}: {name:20} {score}\n"
+            report += '\n'
+
+        if show_payouts:
+            for name in payouts:
+                report += f"{name:18} {payouts[name]}\n"
+            report += '\n'
 
     return report

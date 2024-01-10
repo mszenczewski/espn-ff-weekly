@@ -11,4 +11,3 @@ show_payouts = true
 
 [SETTINGS]
 output_filename = report.txt
-debug = false

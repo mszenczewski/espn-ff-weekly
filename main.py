@@ -14,20 +14,18 @@ SHOW_PAYOUTS = get_config('REPORT', 'show_payouts', bool)
 SHOW_WEEKLY = get_config('REPORT', 'show_weekly', bool)
 WEEKLY_THRESHOLD = get_config('REPORT', 'weekly_threshold', int)
 
-DEBUG = get_config('SETTINGS', 'debug', bool)
 OUTPUT_FILENAME = get_config('SETTINGS', 'output_filename')
-
 OUTPUT_FILE = open(OUTPUT_FILENAME, 'w')
 
 
 def main():
-    for year in YEARS:
-        print(f"league {LEAGUE_ID}, year {year}") if DEBUG else None
+    leagues = []
 
+    for year in YEARS:
         cached_league_filename = f".league_cache/{LEAGUE_ID}_{year}"
 
         if exists(cached_league_filename):
-            print(f"  using cached file {LEAGUE_ID}_{year}...") if DEBUG else None
+            print(f"using cached file {LEAGUE_ID}_{year}")
             with open(cached_league_filename, 'rb') as cached_league_file:
                 league = pickle.load(cached_league_file)
         else:
@@ -39,25 +37,24 @@ def main():
             )
 
             if not exists('.league_cache'):
-                print(f"  creating league_cache directory...") if DEBUG else None
+                print(f"creating league_cache directory")
                 os.mkdir('.league_cache')
 
             with open(cached_league_filename, 'wb+') as cached_league_file:
-                print(f"  caching league {LEAGUE_ID}_{year}...") if DEBUG else None
+                print(f"caching league {LEAGUE_ID}_{year}")
                 pickle.dump(league, cached_league_file)
 
-        print(f"  generating report for {year}...") if DEBUG else None
-        report = generate_report(
-            league=league,
-            year=year,
-            show_payouts=SHOW_PAYOUTS,
-            show_weekly=SHOW_WEEKLY,
-            weekly_threshold=WEEKLY_THRESHOLD,
-        )
+        leagues.append(league)
 
-        print(f"  writing report to {OUTPUT_FILENAME}...") if DEBUG else None
-        OUTPUT_FILE.write(report)
+    report = generate_report(
+        leagues=leagues,
+        show_payouts=SHOW_PAYOUTS,
+        show_weekly=SHOW_WEEKLY,
+        weekly_threshold=WEEKLY_THRESHOLD
+    )
 
+    print(f"writing report to {OUTPUT_FILENAME}")
+    OUTPUT_FILE.write(report)
     OUTPUT_FILE.close()
 
 
