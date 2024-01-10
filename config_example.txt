@@ -5,9 +5,9 @@ league_id = 12345
 years = [2019, 2020, 2021, 2022, 2023]
 
 [REPORT]
+show_payouts = true
 show_weekly = true
 weekly_threshold = 0
-show_payouts = true
 
 [SETTINGS]
 output_filename = report.txt

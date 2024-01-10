@@ -1,4 +1,6 @@
 from typing import Optional
+from tabulate import tabulate
+from itertools import chain
 from espn_api.espn_api.football import League
 
 
@@ -42,6 +44,41 @@ def __weekly_payouts(teams, num_weeks) -> dict:
     return dict(sorted_payouts)
 
 
+def __format_weekly_payouts(weekly_payouts):
+    return __format_data(weekly_payouts)
+
+
+def __format_top_scorers(top_scorers, weekly_threshold):
+    for ts in top_scorers:
+        ts[:] = [x for x in ts if x['score'] > weekly_threshold]
+    top_scorers = __format_data(top_scorers)
+    return top_scorers
+
+
+def __format_data(data):
+    max_len = max(len(d) for d in data)
+
+    for i, d in enumerate(data):
+        if type(d) is dict:
+            data[i] = [x for x in d.items()]
+        elif type(d) is list:
+            data[i] = [(x['name'], x['score']) for x in d]
+        else:
+            raise ValueError
+
+        padding = max_len - len(d)
+        while padding != 0:
+            data[i].append(('', ''))
+            padding -= 1
+
+    data = list(zip(*data))
+
+    for i, d in enumerate(data):
+        data[i] = list(chain.from_iterable(data[i]))
+
+    return data
+
+
 def generate_report(
         leagues: list[League],
         show_payouts: Optional[bool] = True,
@@ -50,26 +87,33 @@ def generate_report(
 ) -> str:
     report = ''
 
+    weekly_payouts = []
+    top_scorers = []
+    years = []
+
     for league in leagues:
         teams = league.teams
         year = league.year
         num_weeks = len(league.settings.matchup_periods)
-        payouts = __weekly_payouts(teams, num_weeks)
-        top_scorers = __top_scorers(teams, num_weeks)
+        wp = __weekly_payouts(teams, num_weeks)
+        ts = __top_scorers(teams, num_weeks)
 
-        report += f"{year}\n----\n"
+        weekly_payouts.append(wp)
+        top_scorers.append(ts)
+
+        years.append(str(year))
+        years.append('')
+
+    if show_payouts:
+        weekly_payouts = __format_weekly_payouts(weekly_payouts)
+        report += tabulate(weekly_payouts, headers=years)
+        report = report.replace('--  --', '------')
         if show_weekly:
-            for i, top_scorer in enumerate(top_scorers):
-                week = i + 1
-                name = top_scorer['name']
-                score = top_scorer['score']
-                if score >= weekly_threshold:
-                    report += f"Week {week:2}: {name:20} {score}\n"
-            report += '\n'
+            report += '\n\n'
 
-        if show_payouts:
-            for name in payouts:
-                report += f"{name:18} {payouts[name]}\n"
-            report += '\n'
+    if show_weekly:
+        top_scorers = __format_top_scorers(top_scorers, weekly_threshold)
+        report += tabulate(top_scorers, headers=years)
+        report = report.replace('--  ------', '----------')
 
     return report
