@@ -1,10 +1,10 @@
-from typing import Optional
+from typing import Optional, Union
 from tabulate import tabulate
 from itertools import chain
-from espn_api.espn_api.football import League
+from espn_api.espn_api.football import League, Team
 
 
-def __top_scorers(teams, num_weeks) -> list:
+def __top_scorers(teams: list[Team], num_weeks: int) -> list[dict]:
     top_scorers = []
 
     for i in range(num_weeks):
@@ -25,7 +25,7 @@ def __top_scorers(teams, num_weeks) -> list:
     return top_scorers
 
 
-def __weekly_payouts(teams, num_weeks) -> dict:
+def __weekly_payouts(teams: list[Team], num_weeks: int) -> dict:
     payouts = {}
 
     for team in teams:
@@ -44,18 +44,18 @@ def __weekly_payouts(teams, num_weeks) -> dict:
     return dict(sorted_payouts)
 
 
-def __format_weekly_payouts(weekly_payouts):
+def __format_weekly_payouts(weekly_payouts: list[dict]) -> list[list]:
     return __format_data(weekly_payouts)
 
 
-def __format_top_scorers(top_scorers, weekly_threshold):
+def __format_top_scorers(top_scorers: list[list], weekly_threshold: int) -> list[list]:
     for ts in top_scorers:
         ts[:] = [x for x in ts if x['score'] > weekly_threshold]
     top_scorers = __format_data(top_scorers)
     return top_scorers
 
 
-def __format_data(data):
+def __format_data(data: Union[list, dict]) -> list[list]:
     max_len = max(len(d) for d in data)
 
     for i, d in enumerate(data):
