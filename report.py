@@ -47,6 +47,8 @@ def __weekly_payouts(teams: list[Team], num_weeks: int) -> dict:
 
 
 def __format_weekly_payouts(weekly_payouts: list[dict]) -> list[list]:
+    for i, wp in enumerate(weekly_payouts):
+        weekly_payouts[i] = {name: num for name, num in wp.items() if num != 0}
     return __format_data(weekly_payouts)
 
 
