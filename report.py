@@ -81,7 +81,7 @@ def __format_data(data: Union[list, dict]) -> list[list]:
     return data
 
 
-def __make_section_title(title, header_width):
+def __make_section_title(title: str, header_width: int) -> str:
     s = '\n'.rjust(header_width, '=')
     s += ''.rjust(int((header_width - len(title))/2), ' ')
     s += title
