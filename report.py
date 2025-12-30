@@ -120,7 +120,7 @@ def generate_report(
         report += __make_section_title(f'TOP SCORE PAYOUTS\n', HEADER_WIDTH)
         weekly_payouts = __format_weekly_payouts(weekly_payouts)
         report += tabulate(weekly_payouts, headers=years)
-        report = report.replace('--  --', '------')
+        report = report.replace('-  --  -', '-----  -')
         if show_weekly:
             report += '\n\n'
 
@@ -128,6 +128,6 @@ def generate_report(
         report += __make_section_title(f'WEEEKLY HIGH SCORE\n', HEADER_WIDTH)
         top_scorers = __format_top_scorers(top_scorers, weekly_threshold)
         report += tabulate(top_scorers, headers=years)
-        report = report.replace('--  ------', '----------')
+        report = report.replace('-  ------  -', '---------  -')
 
     return report
